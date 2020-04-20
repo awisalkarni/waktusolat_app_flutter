@@ -1,5 +1,6 @@
+
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+
 class ChooseLocation extends StatefulWidget {
   @override
   _ChooseLocationState createState() => _ChooseLocationState();
@@ -7,15 +8,12 @@ class ChooseLocation extends StatefulWidget {
 
 class _ChooseLocationState extends State<ChooseLocation> {
 
-  void getData() async {
-    Response response = await get('https://jsonplaceholder.typicode.com/todos/1');
-    print(response.body);
-  }
+
 
   @override
   void initState() {
     super.initState();
-    getData();
+//    getTime();
   }
 
   @override
