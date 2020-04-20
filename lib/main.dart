@@ -4,7 +4,7 @@ import 'package:waktusolatapp/pages/home.dart';
 import 'package:waktusolatapp/pages/loading.dart';
 
 void main() => runApp(MaterialApp(
-  initialRoute: '/home',
+  initialRoute: '/',
   routes: {
     '/': (context) => Loading(),
     '/home': (context) => Home(),
