@@ -23,14 +23,15 @@ class _HomeState extends State<Home> {
       body: ListView.builder(
         itemCount: prayListMap.length+1,
         itemBuilder: (context, index) {
+          Color bgColor = index%2 == 0 ? Color.fromARGB(255, 64, 135, 64) : Color.fromARGB(255, 56, 119, 56);
           if (index == 0) {
-            return HeaderWidget(data: data);
+            return HeaderW idget(data: data);
           }
           index = index-1;
           String prayKey = prayListMap.keys.elementAt(index);
           var date = new DateTime.fromMillisecondsSinceEpoch(prayListMap[prayKey] * 1000);
           String time = DateFormat.jm().format(date);
-          Color bgColor = index%2 == 0 ? Color.fromARGB(255, 64, 135, 64) : Color.fromARGB(255, 56, 119, 56);
+
 
           return PrayTimeWidget(bgColor: bgColor, prayKey: prayKey, time: time);
         },
@@ -52,9 +53,10 @@ class HeaderWidget extends StatelessWidget {
     return Container(
 
       child: Padding(
-        padding: EdgeInsets.fromLTRB(16.0, 21.0, 16.0, 16.0),
+        padding: EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 16.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,15 +106,32 @@ class HeaderWidget extends StatelessWidget {
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
+                IconButton(
+                  iconSize: 24.0,
+                  icon: Image.asset("assets/setting.png"),
+                  tooltip: 'Open Settings',
+                  onPressed: () {
 
-                FlatButton(
-                 child: Image(
-                   image: AssetImage('assets/setting.png'),
-                 ),
-                )
+                  },
+                ),
+                IconButton(
+                  iconSize: 80.0,
+                  icon: Image.asset("assets/zohor.png"),
+                  tooltip: 'Increase volume by 10',
+                  onPressed: () {
 
+                  },
+                ),
+                SizedBox(height: 41.0),
+                Text(
+                  "20 April 2020",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16.0,
+                  ),
+                ),
               ],
             )
           ],
@@ -139,29 +158,33 @@ class PrayTimeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: bgColor,
-      child: ListTile(
-        onTap: () {
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(20.0, 28.0, 16.0, 28.0),
+        child: ListTile(
+          onTap: () {
 
-        },
-        leading: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: 40,
-            maxHeight: 28,
+          },
+          leading: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: 40,
+              maxHeight: 28,
+            ),
+            child: Image.asset('assets/${prayKey.toLowerCase()}.png', fit: BoxFit.cover),
           ),
-          child: Image.asset('assets/${prayKey.toLowerCase()}.png', fit: BoxFit.cover),
-        ),
-        title: Text(
-          prayKey,
-          style: TextStyle(
-              color: Colors.white,
-            fontSize: 20.0
+          title: Text(
+            prayKey,
+            style: TextStyle(
+                color: Colors.white,
+              fontSize: 20.0
+            ),
           ),
-        ),
-        trailing: Text(
-            time,
-          style: TextStyle(
-              color: Colors.white,
-            fontSize: 20.0
+          trailing: Text(
+              time,
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold
+            ),
           ),
         ),
       ),
