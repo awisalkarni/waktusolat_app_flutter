@@ -10,7 +10,7 @@ class Loading extends StatefulWidget {
 class _LoadingState extends State<Loading> {
 
   void setupWorldTime() async {
-    WaktuSolat instance  = WaktuSolat(zone: "sgr03", month: "04", year: "2020");
+    WaktuSolat instance  = WaktuSolat(zone: "sgr02", month: "04", year: "2020");
     await instance.getPrayTimes();
 
     var now = new DateTime.now();
@@ -18,10 +18,16 @@ class _LoadingState extends State<Loading> {
     print(now.day);
 
     List prayList = instance.pray_list != null ? List.from(instance.pray_list) : null;
+//    List prayTimeList = instance.pray_times != null ? List.from(instance.pray_times) : null;
+    List todayList = instance.pray_times[now.day-1];
+    print('unsorted: $todayList');
+    todayList.sort();
+    print('sorted $todayList');
+
     Map prayListMap = Map();
 
     for (int i = 0; i < prayList.length; i++) {
-      prayListMap[instance.pray_list[i]] = instance.pray_times[now.day-1][i];
+      prayListMap[prayList[i]] = todayList[i];
     }
 
     print(prayListMap);
@@ -30,6 +36,7 @@ class _LoadingState extends State<Loading> {
       'zone': instance.zone,
       'month': instance.month,
       'year': instance.year,
+      'origin': instance.origin,
       'prayListMap': prayListMap
     });
 

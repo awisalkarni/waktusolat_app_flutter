@@ -4,6 +4,7 @@ import 'package:waktusolatapp/pages/home.dart';
 import 'package:waktusolatapp/pages/loading_.dart';
 
 void main() => runApp(MaterialApp(
+  theme: ThemeData(fontFamily: 'Inter'),
   initialRoute: '/',
   routes: {
     '/': (context) => Loading(),
