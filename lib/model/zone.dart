@@ -4,8 +4,7 @@ class Zone {
   String state;
   String country;
 
-  Zone.fromJson(Map json)
-      : code = json['code'],
+  Zone.fromJson(Map<String, dynamic> json): code = json['code'],
         location = json['location'],
         state = json["state"],
         country = json["country"];

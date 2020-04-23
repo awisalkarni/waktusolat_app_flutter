@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:waktusolatapp/model/pray_time.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -25,13 +26,13 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
 
     data = data.isNotEmpty ? data : ModalRoute.of(context).settings.arguments;
-    Map prayListMap = data["prayListMap"];
+    PrayTime prayTime = data["prayTime"];
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 64, 135, 64),
       body: AnimationLimiter(
         child: ListView.builder(
-          itemCount: prayListMap.length+1,
+          itemCount: 9,
           itemBuilder: (context, index) {
 
             var itemWidget;
@@ -39,6 +40,18 @@ class _HomeState extends State<Home> {
             if (index == 0) {
               itemWidget = HeaderWidget(data: data);
             } else {
+
+              Map prayListMap = {
+                "Imsak": prayTime.imsak,
+                "Subuh": prayTime.subuh,
+                "Dhuha": prayTime.dhuha,
+                "Syuruk": prayTime.syuruk,
+                "Zohor": prayTime.zohor,
+                "Asar": prayTime.asar,
+                "Maghrib": prayTime.maghrib,
+                "Isyak": prayTime.isyak
+              };
+
               String prayKey = prayListMap.keys.elementAt(index-1);
               var date = new DateTime.fromMillisecondsSinceEpoch(prayListMap[prayKey] * 1000);
               String time = DateFormat.jm().format(date);
@@ -88,7 +101,7 @@ class HeaderWidget extends StatelessWidget {
                       children: <Widget>[
                         Expanded(
                           child: Text(
-                              data['origin'],
+                              data['zone'].location,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 3,
                             style: TextStyle(
@@ -124,7 +137,7 @@ class HeaderWidget extends StatelessWidget {
                   ),
                   SizedBox(height: 24.0),
                   Text(
-                    "26 Syaaban 1441",
+                    data["prayTime"].hijri_date,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16.0,
@@ -132,7 +145,7 @@ class HeaderWidget extends StatelessWidget {
                   ),
                   SizedBox(height: 4.0),
                   Text(
-                    "20 April 2020",
+                    data["prayTime"].date,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16.0,
