@@ -1,13 +1,15 @@
 import 'dart:convert';
 import 'package:http/http.dart';
+import 'package:waktusolatapp/model/pray_time.dart';
+import 'package:waktusolatapp/model/zone.dart';
 
 class WaktuSolat {
   String zone;
   String year;
   String month;
   String origin;
-  var pray_list;
-  var pray_times;
+  List<PrayTime> prayTimes;
+  List<Zone> zones;
 
   WaktuSolat({this.zone, this.year, this.month});
 
@@ -18,12 +20,10 @@ class WaktuSolat {
       String local = 'http://10.0.2.2:8080';
       String prod = 'http://waktusolatapp.com';
 
-      Response response = await get("${local}/api/v1/waktu-solat?month=$month&year=$year&zone=$zone");
+      Response response = await get("${local}/api/v2/waktu-solat?month=$month&year=$year&zone=$zone");
       Map data = jsonDecode(response.body);
-      print(data);
-      pray_list = data['data']['pray']['pray_list'];
-      pray_times = data['data']['pray']['pray_time'];
-      origin = data["data"]["origin"];
+
+      prayTimes.
 
     }
     catch(e){

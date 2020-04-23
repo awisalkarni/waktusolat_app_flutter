@@ -90,7 +90,7 @@ class HeaderWidget extends StatelessWidget {
                           child: Text(
                               data['origin'],
                             overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
+                            maxLines: 3,
                             style: TextStyle(
                               fontSize: 18.0,
                               fontWeight: FontWeight.bold,
@@ -102,7 +102,7 @@ class HeaderWidget extends StatelessWidget {
                       ],
                     ),
                     onPressed: () {
-                      _settingModalBottomSheet(context);
+                      _settingModalBottomSheet(context, data);
                     },
                   ),
                   SizedBox(height: 16.0),
@@ -228,37 +228,29 @@ class PrayTimeWidget extends StatelessWidget {
   }
 }
 
-void _settingModalBottomSheet(context) {
+void _settingModalBottomSheet(context, data) {
+  List zones = data["zones"];
   showModalBottomSheet(
       context: context,
       backgroundColor: Colors.black,
       builder: (BuildContext bc) {
-        return Container(
-          child: new Wrap(
-            children: <Widget>[
-
-              ListTile(
-                  title: new Text(
-                    'Putrajaya',
-                    style: TextStyle(
-                        fontSize: 24.0,
-                        color: Colors.white
-                    ),
-                  ),
-                  onTap: () => {}
-              ),
-              ListTile(
-                title: new Text(
-                    'Kuala Lumpur',
-                    style: TextStyle(
-                        fontSize: 24.0,
-                        color: Colors.white
-                    )
+        return ListView.builder(
+          itemCount: zones.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              subtitle: Text(
+                zones[index].state,
+                style: TextStyle(
+                    color: Colors.white
+                ),),
+              title: Text(
+                zones[index].location,
+                style: TextStyle(
+                    color: Colors.white
                 ),
-                onTap: () => {},
               ),
-            ],
-          ),
+            );
+          },
         );
       }
   );

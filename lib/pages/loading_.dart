@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:waktusolatapp/services/waktu_solat.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:waktusolatapp/services/zones.dart';
 
 class Loading extends StatefulWidget {
   @override
@@ -10,8 +11,15 @@ class Loading extends StatefulWidget {
 class _LoadingState extends State<Loading> {
 
   void setupWorldTime() async {
-    WaktuSolat instance  = WaktuSolat(zone: "sgr02", month: "04", year: "2020");
+    WaktuSolat instance  = WaktuSolat(zone: "sgr01", month: "04", year: "2020");
     await instance.getPrayTimes();
+
+    Zones zones  = Zones();
+    await zones.getZones();
+
+    List zoneList = zones.zones;
+
+
 
     var now = new DateTime.now();
 
@@ -20,9 +28,9 @@ class _LoadingState extends State<Loading> {
     List prayList = instance.pray_list != null ? List.from(instance.pray_list) : null;
 //    List prayTimeList = instance.pray_times != null ? List.from(instance.pray_times) : null;
     List todayList = instance.pray_times[now.day-1];
-    print('unsorted: $todayList');
-    todayList.sort();
-    print('sorted $todayList');
+//    print('unsorted: $todayList');
+//    todayList.sort();
+//    print('sorted $todayList');
 
     Map prayListMap = Map();
 
@@ -37,7 +45,8 @@ class _LoadingState extends State<Loading> {
       'month': instance.month,
       'year': instance.year,
       'origin': instance.origin,
-      'prayListMap': prayListMap
+      'prayListMap': prayListMap,
+      'zones': zoneList
     });
 
 
