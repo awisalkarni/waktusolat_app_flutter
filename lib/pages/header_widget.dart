@@ -27,7 +27,7 @@ class HeaderWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Expanded(
-            flex: 2,
+            flex: 3,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -88,7 +88,7 @@ class HeaderWidget extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: 1,
+            flex: 2,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -109,7 +109,7 @@ class HeaderWidget extends StatelessWidget {
                   difference,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 15.0,
+                    fontSize: 14.0,
                   ),
                 ),
               ],
@@ -130,14 +130,19 @@ void _settingModalBottomSheet(context, data) {
         return ListView.builder(
           itemCount: zones.length,
           itemBuilder: (context, index) {
-            return ListTile(
-              subtitle: Text(
-                zones[index].state,
-                style: TextStyle(color: Colors.white),
-              ),
-              title: Text(
-                zones[index].location,
-                style: TextStyle(color: Colors.white),
+            return Container(
+              child: ListTile(
+                onTap: (){
+
+                },
+                subtitle: Text(
+                  zones[index].state,
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+                title: Text(
+                  zones[index].location,
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             );
           },

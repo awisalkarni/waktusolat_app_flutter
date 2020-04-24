@@ -97,7 +97,7 @@ class _HomeState extends State<Home> {
                 nextActivePrayTime = {nextActive: time};
                 Duration difference = nextActiveTime.difference(now);
                 differenceString = (difference.inHours == 0)
-                    ? "${difference.inMinutes.remainder(60)} minit lagi"
+                    ? "${difference.inMinutes.remainder(60)} minit ${difference.inSeconds.remainder(60)} saat lagi"
                     : "${difference.inHours} jam ${difference.inMinutes.remainder(60)} minit lagi";
               }
 
