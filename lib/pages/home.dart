@@ -17,14 +17,14 @@ class _HomeState extends State<Home> {
   PrayTime prayTime;
   Map prayListMap;
   String currentActive;
-  String nextActive;
+  String nextActive = "";
+  DateTime now;
+  String hijriDate;
+  String normalDate;
 
   @override
   void initState() {
     super.initState();
-
-
-
   }
 
   @override
@@ -32,6 +32,30 @@ class _HomeState extends State<Home> {
 
     data = data.isNotEmpty ? data : ModalRoute.of(context).settings.arguments;
     prayTime = data["prayTime"];
+
+    var islamicMonths = [
+      "Muharram",
+      "Safar",
+      "Rabiulawal",
+      "Rabiulakhir",
+      "Jumadilawal",
+      "Jamadilakhir",
+      "Rejab",
+      "Syaaban",
+      "Ramadan",
+      "Syawal",
+      "Zulkaedah",
+      "Zulhijjah",
+    ];
+
+    var hijriSplit = prayTime.hijri_date.split('-');
+    var day = hijriSplit[2];
+    var month = islamicMonths[int.parse(hijriSplit[1])-1];
+    var year = hijriSplit[0];
+
+    hijriDate = '$day $month $year';
+
+    normalDate = DateFormat("d MMM yyyy").format(DateFormat("yyyy-M-dd").parse(prayTime.date));
 
     prayListMap = {
       "Imsak": prayTime.imsak,
@@ -48,7 +72,7 @@ class _HomeState extends State<Home> {
 
 
     Timer.periodic(Duration(seconds: 1), (Timer t) => setState((){
-      var now = DateTime.now();
+      now = DateTime.now();
       var unixTimestampNow = now.millisecondsSinceEpoch/1000;
 
       var activePosition = 0;
@@ -84,13 +108,32 @@ class _HomeState extends State<Home> {
             Color bgColor = index%2 == 0 ? Color.fromARGB(255, 64, 135, 64) : Color.fromARGB(255, 56, 119, 56);
             if (index == 0) {
 
-              Map<String, int> nextActivePrayTime = {nextActive: prayListMap[nextActive]};
-              itemWidget = HeaderWidget(data: data, nextActive: nextActivePrayTime);
+
+              Map<String, String> nextActivePrayTime = {"loading": "00:00"};
+              String differenceString = "loading";
+
+              if (prayListMap[nextActive] != null) {
+                var timeNext = prayListMap[nextActive];
+                DateTime nextActiveTime = DateTime.fromMillisecondsSinceEpoch(timeNext * 1000);
+                String time = DateFormat.jm().format(nextActiveTime);
+                nextActivePrayTime = {nextActive: time};
+                Duration difference = nextActiveTime.difference(now);
+                differenceString = (difference.inHours == 0) ? "${difference.inMinutes.remainder(60)} minit lagi" : "${difference.inHours} jam ${difference.inMinutes.remainder(60)} minit lagi";
+              }
+
+              itemWidget = HeaderWidget(
+                data: data,
+                nextActive: nextActivePrayTime,
+                difference: differenceString,
+                hijriDate: hijriDate,
+                normalDate: normalDate,
+              );
+
 
             } else {
 
               String prayKey = prayListMap.keys.elementAt(index-1);
-              var date = new DateTime.fromMillisecondsSinceEpoch(prayListMap[prayKey] * 1000);
+              var date = DateTime.fromMillisecondsSinceEpoch(prayListMap[prayKey] * 1000);
               String time = DateFormat.jm().format(date);
               itemWidget = PrayTimeWidget(bgColor: bgColor, prayKey: prayKey, time: time, isActive: (prayKey == currentActive), isNextActive: (prayKey == nextActive));
 
@@ -117,10 +160,16 @@ class HeaderWidget extends StatelessWidget {
     Key key,
     @required this.data,
     @required this.nextActive,
+    @required this.difference,
+    @required this.hijriDate,
+    @required this.normalDate,
   }) : super(key: key);
 
   final Map data;
-  final Map<String, int> nextActive;
+  final Map<String, String> nextActive;
+  final String difference;
+  final String hijriDate;
+  final String normalDate;
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +217,7 @@ class HeaderWidget extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "time",
+                    nextActive[nextActive.keys.elementAt(0)],
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 40.0,
@@ -177,7 +226,7 @@ class HeaderWidget extends StatelessWidget {
                   ),
                   SizedBox(height: 24.0),
                   Text(
-                    data["prayTime"].hijri_date,
+                    hijriDate,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16.0,
@@ -185,7 +234,7 @@ class HeaderWidget extends StatelessWidget {
                   ),
                   SizedBox(height: 4.0),
                   Text(
-                    data["prayTime"].date,
+                    normalDate,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16.0,
@@ -211,10 +260,10 @@ class HeaderWidget extends StatelessWidget {
                   SvgPicture.asset("assets/pray_icons/subuh.svg", height: 80.0, width: 80.0,),
                   SizedBox(height: 41.0),
                   Text(
-                    "20 April 2020",
+                    difference,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 16.0,
+                      fontSize: 15.0,
                     ),
                   ),
                 ],

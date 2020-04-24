@@ -3,6 +3,7 @@ import 'package:waktusolatapp/model/pray_time.dart';
 import 'package:waktusolatapp/services/waktu_solat.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:waktusolatapp/services/zones.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Loading extends StatefulWidget {
   @override
@@ -12,6 +13,7 @@ class Loading extends StatefulWidget {
 class _LoadingState extends State<Loading> {
 
   void setupWorldTime() async {
+
     WaktuSolat instance  = WaktuSolat(zoneCode: "sgr01", month: "04", year: "2020");
     await instance.getPrayTimes();
 
@@ -23,9 +25,6 @@ class _LoadingState extends State<Loading> {
     var now = new DateTime.now();
 
     List prayTimes = instance.prayTimes;
-
-    print(prayTimes);
-
     PrayTime prayTime = prayTimes[now.day - 1];
 
     Navigator.pushReplacementNamed(context, '/home', arguments: {
