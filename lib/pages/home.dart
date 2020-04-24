@@ -37,7 +37,7 @@ class _HomeState extends State<Home> {
     normalDate = prayTime.date;
 
     prayListMap = {
-      "Imsak": prayTime.imsak,
+//      "Imsak": prayTime.imsak,
       "Subuh": prayTime.subuh,
       "Syuruk": prayTime.syuruk,
       "Dhuha": prayTime.dhuha,
@@ -79,7 +79,7 @@ class _HomeState extends State<Home> {
       backgroundColor: Color.fromARGB(255, 64, 135, 64),
       body: AnimationLimiter(
         child: ListView.builder(
-          itemCount: 9,
+          itemCount: 8,
           itemBuilder: (context, index) {
             var itemWidget;
             Color bgColor = index % 2 == 0
@@ -95,10 +95,21 @@ class _HomeState extends State<Home> {
                     DateTime.fromMillisecondsSinceEpoch(timeNext * 1000);
                 String time = DateFormat.jm().format(nextActiveTime);
                 nextActivePrayTime = {nextActive: time};
+
+                if (nextActiveTime.isBefore(now)) {
+                  nextActiveTime = nextActiveTime.add(Duration(days: 1));
+                }
                 Duration difference = nextActiveTime.difference(now);
-                differenceString = (difference.inHours == 0)
-                    ? "${difference.inMinutes.remainder(60)} minit ${difference.inSeconds.remainder(60)} saat lagi"
-                    : "${difference.inHours} jam ${difference.inMinutes.remainder(60)} minit lagi";
+                var hours = difference.inHours.abs();
+                var mins = difference.inMinutes.remainder(60).abs();
+                var secs = difference.inSeconds.remainder(60).abs();
+                differenceString = (hours == 0)
+                    ? "$mins minit $secs saat lagi"
+                    : "$hours jam $mins minit lagi";
+
+                differenceString = (mins == 0 && hours == 0)
+                    ? "$secs saat lagi"
+                    : differenceString;
               }
 
               itemWidget = HeaderWidget(
