@@ -30,32 +30,15 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
 
-    data = data.isNotEmpty ? data : ModalRoute.of(context).settings.arguments;
+    data = data.isNotEmpty ? data : ModalRoute
+        .of(context)
+        .settings
+        .arguments;
     prayTime = data["prayTime"];
 
-    var islamicMonths = [
-      "Muharram",
-      "Safar",
-      "Rabiulawal",
-      "Rabiulakhir",
-      "Jumadilawal",
-      "Jamadilakhir",
-      "Rejab",
-      "Syaaban",
-      "Ramadan",
-      "Syawal",
-      "Zulkaedah",
-      "Zulhijjah",
-    ];
+    hijriDate = prayTime.hijri_date;
 
-    var hijriSplit = prayTime.hijri_date.split('-');
-    var day = hijriSplit[2];
-    var month = islamicMonths[int.parse(hijriSplit[1])-1];
-    var year = hijriSplit[0];
-
-    hijriDate = '$day $month $year';
-
-    normalDate = DateFormat("d MMM yyyy").format(DateFormat("yyyy-M-dd").parse(prayTime.date));
+    normalDate = prayTime.date;
 
     prayListMap = {
       "Imsak": prayTime.imsak,
