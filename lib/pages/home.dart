@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
@@ -9,16 +11,19 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-
-
 class _HomeState extends State<Home> {
 
   Map data = {};
-
+  PrayTime prayTime;
+  Map prayListMap;
+  String currentActive;
+  String nextActive;
 
   @override
   void initState() {
     super.initState();
+
+
 
   }
 
@@ -26,7 +31,47 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
 
     data = data.isNotEmpty ? data : ModalRoute.of(context).settings.arguments;
-    PrayTime prayTime = data["prayTime"];
+    prayTime = data["prayTime"];
+
+    prayListMap = {
+      "Imsak": prayTime.imsak,
+      "Subuh": prayTime.subuh,
+      "Syuruk": prayTime.syuruk,
+      "Dhuha": prayTime.dhuha,
+      "Zohor": prayTime.zohor,
+      "Asar": prayTime.asar,
+      "Maghrib": prayTime.maghrib,
+      "Isyak": prayTime.isyak
+    };
+
+    List prayTitles = List();
+
+
+    Timer.periodic(Duration(seconds: 1), (Timer t) => setState((){
+      var now = DateTime.now();
+      var unixTimestampNow = now.millisecondsSinceEpoch/1000;
+
+      var activePosition = 0;
+      var pos = 0;
+      void iterateMapEntry(key, value) {
+        if (unixTimestampNow > value) {
+          currentActive = key;
+          activePosition = pos;
+        }
+        pos++;
+        prayTitles.add(key);
+      }
+
+      prayListMap.forEach(iterateMapEntry);
+
+      if (currentActive != "Isyak") {
+        nextActive = prayTitles[activePosition + 1];
+      } else {
+        nextActive = prayTitles[0];
+      }
+
+    }));
+
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 64, 135, 64),
@@ -38,24 +83,17 @@ class _HomeState extends State<Home> {
             var itemWidget;
             Color bgColor = index%2 == 0 ? Color.fromARGB(255, 64, 135, 64) : Color.fromARGB(255, 56, 119, 56);
             if (index == 0) {
-              itemWidget = HeaderWidget(data: data);
-            } else {
 
-              Map prayListMap = {
-                "Imsak": prayTime.imsak,
-                "Subuh": prayTime.subuh,
-                "Dhuha": prayTime.dhuha,
-                "Syuruk": prayTime.syuruk,
-                "Zohor": prayTime.zohor,
-                "Asar": prayTime.asar,
-                "Maghrib": prayTime.maghrib,
-                "Isyak": prayTime.isyak
-              };
+              Map<String, int> nextActivePrayTime = {nextActive: prayListMap[nextActive]};
+              itemWidget = HeaderWidget(data: data, nextActive: nextActivePrayTime);
+
+            } else {
 
               String prayKey = prayListMap.keys.elementAt(index-1);
               var date = new DateTime.fromMillisecondsSinceEpoch(prayListMap[prayKey] * 1000);
               String time = DateFormat.jm().format(date);
-              itemWidget = PrayTimeWidget(bgColor: bgColor, prayKey: prayKey, time: time);
+              itemWidget = PrayTimeWidget(bgColor: bgColor, prayKey: prayKey, time: time, isActive: (prayKey == currentActive), isNextActive: (prayKey == nextActive));
+
             }
 
             return AnimationConfiguration.staggeredList(
@@ -78,9 +116,11 @@ class HeaderWidget extends StatelessWidget {
   const HeaderWidget({
     Key key,
     @required this.data,
+    @required this.nextActive,
   }) : super(key: key);
 
   final Map data;
+  final Map<String, int> nextActive;
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +160,7 @@ class HeaderWidget extends StatelessWidget {
                   ),
                   SizedBox(height: 16.0),
                   Text(
-                    "Zohor",
+                    nextActive.keys.elementAt(0),
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 25.0,
@@ -128,7 +168,7 @@ class HeaderWidget extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "1:00 PM",
+                    "time",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 40.0,
@@ -194,16 +234,20 @@ class PrayTimeWidget extends StatelessWidget {
     @required this.bgColor,
     @required this.prayKey,
     @required this.time,
+    @required this.isActive,
+    @required this.isNextActive,
   }) : super(key: key);
 
   final Color bgColor;
   final String prayKey;
   final String time;
+  final bool isActive;
+  final bool isNextActive;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: bgColor,
+      color: (isActive) ? Color.fromARGB(255, 243, 156, 18) : bgColor,
       child: Padding(
         padding: EdgeInsets.fromLTRB(20.0, 20.0, 16.0, 20.0),
         child: ListTile(
