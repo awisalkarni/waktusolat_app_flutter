@@ -9,6 +9,7 @@ class HeaderWidget extends StatelessWidget {
     @required this.difference,
     @required this.hijriDate,
     @required this.normalDate,
+    this.changeZone,
   }) : super(key: key);
 
   final Map data;
@@ -16,6 +17,7 @@ class HeaderWidget extends StatelessWidget {
   final String difference;
   final String hijriDate;
   final String normalDate;
+  final Function changeZone;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +51,7 @@ class HeaderWidget extends StatelessWidget {
                     ],
                   ),
                   onPressed: () {
-                    _settingModalBottomSheet(context, data);
+                    _settingModalBottomSheet(context, data, changeZone);
                   },
                 ),
                 SizedBox(height: 16.0),
@@ -121,7 +123,7 @@ class HeaderWidget extends StatelessWidget {
   }
 }
 
-void _settingModalBottomSheet(context, data) {
+void _settingModalBottomSheet(context, data, changeZone) {
   List zones = data["zones"];
   showModalBottomSheet(
       context: context,
@@ -133,7 +135,7 @@ void _settingModalBottomSheet(context, data) {
             return Container(
               child: ListTile(
                 onTap: (){
-
+                  changeZone(zones[index]);
                 },
                 subtitle: Text(
                   zones[index].state,

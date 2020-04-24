@@ -1,11 +1,11 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
 import 'package:waktusolatapp/model/pray_time.dart';
 import 'package:waktusolatapp/pages/pray_time_tile.dart';
 import 'package:waktusolatapp/pages/header_widget.dart';
+import 'package:waktusolatapp/model/zone.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -73,7 +73,8 @@ class _HomeState extends State<Home> {
               } else {
                 nextActive = prayTitles[0];
               }
-            }));
+            })
+    );
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 64, 135, 64),
@@ -118,6 +119,10 @@ class _HomeState extends State<Home> {
                 difference: differenceString,
                 hijriDate: hijriDate,
                 normalDate: normalDate,
+                changeZone: (Zone zone) {
+                  print(zone.code);
+                  setState(() {});
+                }
               );
             } else {
               String prayKey = prayListMap.keys.elementAt(index - 1);
