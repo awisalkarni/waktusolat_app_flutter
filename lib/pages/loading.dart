@@ -14,7 +14,19 @@ class _LoadingState extends State<Loading> {
 
   void setupWorldTime() async {
 
-    WaktuSolat instance  = WaktuSolat(zoneCode: "sgr01", month: "04", year: "2020");
+    //try local first
+    final prefs = await SharedPreferences.getInstance();
+
+    // read
+    final zoneCodePrefs = prefs.getString('zone_code') ?? null;
+
+    final String zoneCode = (zoneCodePrefs != null) ? zoneCodePrefs : "wly01";
+
+    var now = new DateTime.now();
+    final String month = now.month.toString();
+    final String year = now.year.toString();
+
+    WaktuSolat instance  = WaktuSolat(zoneCode: zoneCode, month: month, year: year);
     await instance.getPrayTimes();
 
     Zones zones  = Zones();
@@ -22,7 +34,7 @@ class _LoadingState extends State<Loading> {
 
     List zoneList = zones.zones;
 
-    var now = new DateTime.now();
+
 
     List prayTimes = instance.prayTimes;
     PrayTime prayTime = prayTimes[now.day - 1];

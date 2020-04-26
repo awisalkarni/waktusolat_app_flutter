@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:waktusolatapp/model/pray_time.dart';
 import 'package:waktusolatapp/pages/pray_time_tile.dart';
 import 'package:waktusolatapp/pages/header_widget.dart';
@@ -21,21 +23,67 @@ class _HomeState extends State<Home> {
   DateTime now;
   String hijriDate;
   String normalDate;
+  Timer timer;
 
   @override
   void initState() {
     super.initState();
   }
 
+
+  @override
+  void deactivate() {
+    timer.cancel();
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
+
+  void reloadData(){
+    setState(() {
+
+
+      List prayTitles = List();
+      now = DateTime.now();
+      var unixTimestampNow = now.millisecondsSinceEpoch / 1000;
+
+      var activePosition = 0;
+      var pos = 0;
+      void iterateMapEntry(key, value) {
+        if (unixTimestampNow > value) {
+          currentActive = key;
+          activePosition = pos;
+        }
+        pos++;
+        prayTitles.add(key);
+      }
+
+      prayListMap.forEach(iterateMapEntry);
+
+      if (currentActive != "Isyak") {
+        nextActive = prayTitles[activePosition + 1];
+      } else {
+        nextActive = prayTitles[0];
+      }
+    });
+  }
+
+  void setTimer(){
+    timer = Timer.periodic(Duration(seconds: 1), (Timer timer){
+      if (this.mounted) {
+        reloadData();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context).settings.arguments;
     prayTime = data["prayTime"];
-
-    hijriDate = prayTime.hijri_date;
-
-    normalDate = prayTime.date;
-
     prayListMap = {
 //      "Imsak": prayTime.imsak,
       "Subuh": prayTime.subuh,
@@ -47,34 +95,12 @@ class _HomeState extends State<Home> {
       "Isyak": prayTime.isyak
     };
 
-    List prayTitles = List();
+    hijriDate = prayTime.hijri_date;
 
-    Timer.periodic(
-        Duration(seconds: 1),
-        (Timer t) => setState(() {
-              now = DateTime.now();
-              var unixTimestampNow = now.millisecondsSinceEpoch / 1000;
+    normalDate = prayTime.date;
 
-              var activePosition = 0;
-              var pos = 0;
-              void iterateMapEntry(key, value) {
-                if (unixTimestampNow > value) {
-                  currentActive = key;
-                  activePosition = pos;
-                }
-                pos++;
-                prayTitles.add(key);
-              }
+    setTimer();
 
-              prayListMap.forEach(iterateMapEntry);
-
-              if (currentActive != "Isyak") {
-                nextActive = prayTitles[activePosition + 1];
-              } else {
-                nextActive = prayTitles[0];
-              }
-            })
-    );
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 64, 135, 64),
@@ -119,9 +145,16 @@ class _HomeState extends State<Home> {
                 difference: differenceString,
                 hijriDate: hijriDate,
                 normalDate: normalDate,
-                changeZone: (Zone zone) {
+                changeZone: (Zone zone) async {
                   print(zone.code);
-                  setState(() {});
+                  final prefs = await SharedPreferences.getInstance();
+                  prefs.setString("zone_code", zone.code);
+
+//                  timer.cancel();
+//                  Navigator.pop(context);
+//                  Navigator.popAndPushNamed(context, '/');
+                  Phoenix.rebirth(context);
+
                 }
               );
             } else {
