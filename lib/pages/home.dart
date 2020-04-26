@@ -53,13 +53,20 @@ class _HomeState extends State<Home> {
 
       var activePosition = 0;
       var pos = 0;
+
       void iterateMapEntry(key, value) {
         if (unixTimestampNow > value) {
           currentActive = key;
+
           activePosition = pos;
         }
         pos++;
         prayTitles.add(key);
+      }
+
+      if (currentActive == null) {
+        currentActive = prayListMap.keys.elementAt(prayListMap.length-1);
+        nextActive = prayListMap.keys.elementAt(0);
       }
 
       prayListMap.forEach(iterateMapEntry);
