@@ -28,6 +28,7 @@ class HeaderWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Expanded(
             flex: 3,
@@ -93,8 +94,9 @@ class HeaderWidget extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 IconButton(
                   iconSize: 24.0,
@@ -107,12 +109,11 @@ class HeaderWidget extends StatelessWidget {
                   height: 80.0,
                   width: 80.0,
                 ),
-                SizedBox(height: 41.0),
                 Text(
                   difference,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 14.0,
+                    fontSize: 16.0,
                   ),
                 ),
               ],

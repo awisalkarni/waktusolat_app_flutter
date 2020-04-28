@@ -6,7 +6,7 @@ import 'package:waktusolatapp/pages/loading.dart';
 
 void main() => runApp(Phoenix(
       child: MaterialApp(
-        theme: ThemeData(fontFamily: 'Inter'),
+        theme: ThemeData(fontFamily: 'Raleway'),
         initialRoute: '/',
         routes: {
           '/': (context) => Loading(),

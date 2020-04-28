@@ -22,7 +22,7 @@ class PrayTimeWidget extends StatelessWidget {
     return Container(
       color: (isActive) ? Color.fromARGB(255, 243, 156, 18) : bgColor,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(20.0, 20.0, 16.0, 20.0),
+        padding: EdgeInsets.fromLTRB(20.0, 15.0, 16.0, 15.0),
         child: ListTile(
           onTap: () {},
           leading: ConstrainedBox(
@@ -37,15 +37,14 @@ class PrayTimeWidget extends StatelessWidget {
           title: Text(
             prayKey,
             style: TextStyle(
-                color: Colors.white, fontSize: 20.0, fontFamily: 'Inter'),
+                color: Colors.white, fontSize: 24.0),
           ),
           trailing: Text(
             time,
             style: TextStyle(
                 color: Colors.white,
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Inter'),
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold),
           ),
         ),
       ),
