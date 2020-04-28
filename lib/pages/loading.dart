@@ -22,7 +22,11 @@ class _LoadingState extends State<Loading> {
 // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
     var initializationSettingsAndroid = AndroidInitializationSettings('launcher_icon');
     var initializationSettingsIOS = IOSInitializationSettings(
-        onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+      requestSoundPermission: false,
+      requestBadgePermission: false,
+      requestAlertPermission: false,
+      onDidReceiveLocalNotification: onDidReceiveLocalNotification,
+    );
     var initializationSettings = InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
     await notifications.initialize(initializationSettings,
@@ -32,6 +36,22 @@ class _LoadingState extends State<Loading> {
   void scheduleLocalNotification(List prayTimes, Zone zone) async
   {
     await notifications.cancelAll();
+    var pendingNotificationRequests = await notifications.pendingNotificationRequests();
+
+    print('pending notifications ${pendingNotificationRequests.length}');
+
+    //request permission iOS
+    var result = await notifications
+        .resolvePlatformSpecificImplementation<
+        IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    print('notification request result iOS: $result');
+
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'waktusolatapp', 'prayer_time_notication', 'Prayer time notification',
         importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
@@ -40,9 +60,6 @@ class _LoadingState extends State<Loading> {
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 
     for (PrayTime prayTime in prayTimes) {
-
-
-
       Map prayListMap = {
 //      "Imsak": prayTime.imsak,
         "Subuh": prayTime.subuh,
@@ -60,13 +77,13 @@ class _LoadingState extends State<Loading> {
         var unixTimestampNow = now.millisecondsSinceEpoch / 1000;
 
         if (prayTimeTimeStamp >= unixTimestampNow) {
-          DateTime prayTimeSchedule = DateTime.fromMillisecondsSinceEpoch(prayListMap.values.elementAt(i) * 1000);
+          var prayTimeSchedule = DateTime.fromMillisecondsSinceEpoch(prayListMap.values.elementAt(i) * 1000);
 
           String prayTimeTitle = prayListMap.keys.elementAt(i);
-          print('waktu: $prayTimeTitle, time: $prayTimeSchedule');
+          print('schedule $prayTimeTitle - $prayTimeSchedule');
 
           await notifications.schedule(
-              0,
+              prayListMap.values.elementAt(i),
               'Waktu $prayTimeTitle',
               'Telah masuk waktu $prayTimeTitle bagi ${zone.location}',
               prayTimeSchedule,
@@ -75,6 +92,10 @@ class _LoadingState extends State<Loading> {
         }
       }
     }
+
+    pendingNotificationRequests = await notifications.pendingNotificationRequests();
+    print('pending notifications ${pendingNotificationRequests.length}');
+
   }
 
   void scheduleTest() async {
@@ -129,7 +150,7 @@ class _LoadingState extends State<Loading> {
     DateTime lastMonth = Jiffy().subtract(months: 1);
     String lastMonthKey = '${zoneCode}_${lastMonth.month.toString()}_${lastMonth.year.toString()}';
     prefs.remove(lastMonthKey);
-    
+
     Zones zones  = Zones();
     await zones.getZones();
 
@@ -139,7 +160,6 @@ class _LoadingState extends State<Loading> {
 
     scheduleLocalNotification(prayTimes, instance.zone);
 
-//    scheduleTest();
     Navigator.pushReplacementNamed(context, '/home', arguments: {
       'zone': instance.zone,
       'month': instance.month,
