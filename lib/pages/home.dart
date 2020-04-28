@@ -15,6 +15,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
   Map data = {};
   PrayTime prayTime;
   Map prayListMap;
@@ -30,7 +31,6 @@ class _HomeState extends State<Home> {
     super.initState();
   }
 
-
   @override
   void deactivate() {
     timer.cancel();
@@ -45,8 +45,6 @@ class _HomeState extends State<Home> {
 
   void reloadData(){
     setState(() {
-
-
       List prayTitles = List();
       now = DateTime.now();
       var unixTimestampNow = now.millisecondsSinceEpoch / 1000;
@@ -57,14 +55,13 @@ class _HomeState extends State<Home> {
       void iterateMapEntry(key, value) {
         if (unixTimestampNow > value) {
           currentActive = key;
-
           activePosition = pos;
         }
         pos++;
         prayTitles.add(key);
       }
 
-      if (currentActive == null) {
+      if (currentActive == null && prayListMap.length > 0) {
         currentActive = prayListMap.keys.elementAt(prayListMap.length-1);
         nextActive = prayListMap.keys.elementAt(0);
       }
@@ -103,11 +100,8 @@ class _HomeState extends State<Home> {
     };
 
     hijriDate = prayTime.hijri_date;
-
     normalDate = prayTime.date;
-
     setTimer();
-
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 64, 135, 64),
@@ -153,15 +147,9 @@ class _HomeState extends State<Home> {
                 hijriDate: hijriDate,
                 normalDate: normalDate,
                 changeZone: (Zone zone) async {
-                  print(zone.code);
                   final prefs = await SharedPreferences.getInstance();
                   prefs.setString("zone_code", zone.code);
-
-//                  timer.cancel();
-//                  Navigator.pop(context);
-//                  Navigator.popAndPushNamed(context, '/');
                   Phoenix.rebirth(context);
-
                 }
               );
             } else {

@@ -22,6 +22,7 @@ class HeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: Color.fromARGB(255, 64, 135, 64),
         child: Padding(
       padding: EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 16.0),
       child: Row(
