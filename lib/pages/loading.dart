@@ -40,6 +40,8 @@ class _LoadingState extends State<Loading> {
 
     for (PrayTime prayTime in prayTimes) {
 
+
+
       Map prayListMap = {
 //      "Imsak": prayTime.imsak,
         "Subuh": prayTime.subuh,
@@ -52,17 +54,24 @@ class _LoadingState extends State<Loading> {
       };
 
       for (int i = 0; i<prayListMap.length; i++) {
-        DateTime prayTimeSchedule = DateTime.fromMillisecondsSinceEpoch(prayListMap.values.elementAt(i) * 1000);
-        String prayTimeTitle = prayListMap.keys.elementAt(i);
+        var prayTimeTimeStamp = prayListMap.values.elementAt(i);
+        var now = DateTime.now();
+        var unixTimestampNow = now.millisecondsSinceEpoch / 1000;
 
-        await notifications.schedule(
-            0,
-            'Waktu $prayTimeTitle',
-            'Telah masuk waktu $prayTimeTitle bagi ${zone.location}',
-            prayTimeSchedule,
-            platformChannelSpecifics
-        );
+        if (prayTimeTimeStamp >= unixTimestampNow) {
+          DateTime prayTimeSchedule = DateTime.fromMillisecondsSinceEpoch(prayListMap.values.elementAt(i) * 1000);
 
+          String prayTimeTitle = prayListMap.keys.elementAt(i);
+          print('waktu: $prayTimeTitle, time: $prayTimeSchedule');
+
+          await notifications.schedule(
+              0,
+              'Waktu $prayTimeTitle',
+              'Telah masuk waktu $prayTimeTitle bagi ${zone.location}',
+              prayTimeSchedule,
+              platformChannelSpecifics
+          );
+        }
       }
     }
   }
