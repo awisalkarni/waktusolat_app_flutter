@@ -9,12 +9,16 @@ import 'package:waktusolatapp/pages/pray_time_tile.dart';
 import 'package:waktusolatapp/pages/header_widget.dart';
 import 'package:waktusolatapp/model/zone.dart';
 
+
+
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+
+
 
   Map data = {};
   PrayTime prayTime;
@@ -30,6 +34,8 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
   }
+  
+
 
   @override
   void deactivate() {
@@ -178,4 +184,6 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+
+
 }

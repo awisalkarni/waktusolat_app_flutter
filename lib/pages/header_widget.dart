@@ -109,6 +109,7 @@ class HeaderWidget extends StatelessWidget {
                   height: 80.0,
                   width: 80.0,
                 ),
+                SizedBox(height: 50.0),
                 Text(
                   difference,
                   style: TextStyle(
