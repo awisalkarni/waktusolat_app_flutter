@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:waktusolatapp/model/pray_time.dart';
 import 'package:waktusolatapp/model/zone.dart';
 import 'package:waktusolatapp/services/waktu_solat.dart';
@@ -76,6 +77,23 @@ class _LoadingState extends State<Loading> {
     }
   }
 
+  void scheduleTest() async {
+    var scheduledNotificationDateTime = DateTime.now().add(Duration(seconds: 5));
+    print('schedule: $scheduledNotificationDateTime');
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails('your other channel id',
+        'your other channel name', 'your other channel description');
+    var iOSPlatformChannelSpecifics =
+    IOSNotificationDetails();
+    NotificationDetails platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await notifications.schedule(
+        0,
+        'scheduled title',
+        'scheduled body',
+        scheduledNotificationDateTime,
+        platformChannelSpecifics);
+  }
+
 
   Future onDidReceiveLocalNotification(int id, String title, String body, String payload) {
   }
@@ -102,7 +120,16 @@ class _LoadingState extends State<Loading> {
 
     WaktuSolat instance  = WaktuSolat(zoneCode: zoneCode, month: month, year: year);
     await instance.getPrayTimes();
+    
+    //download for next month
+    DateTime nextMonth = Jiffy().add(months: 1);
+    WaktuSolat(zoneCode: zoneCode, month: nextMonth.month.toString(), year: nextMonth.year.toString());
 
+    //remove last month
+    DateTime lastMonth = Jiffy().subtract(months: 1);
+    String lastMonthKey = '${zoneCode}_${lastMonth.month.toString()}_${lastMonth.year.toString()}';
+    prefs.remove(lastMonthKey);
+    
     Zones zones  = Zones();
     await zones.getZones();
 
@@ -112,6 +139,7 @@ class _LoadingState extends State<Loading> {
 
     scheduleLocalNotification(prayTimes, instance.zone);
 
+//    scheduleTest();
     Navigator.pushReplacementNamed(context, '/home', arguments: {
       'zone': instance.zone,
       'month': instance.month,
