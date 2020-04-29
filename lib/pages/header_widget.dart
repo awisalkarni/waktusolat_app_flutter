@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:waktusolatapp/model/zone.dart';
 
 class HeaderWidget extends StatelessWidget {
   const HeaderWidget({
@@ -135,21 +136,35 @@ void _settingModalBottomSheet(context, data, changeZone) {
         return ListView.builder(
           itemCount: zones.length,
           itemBuilder: (context, index) {
-            return Container(
-              child: ListTile(
-                onTap: (){
-                  changeZone(zones[index]);
-                },
-                subtitle: Text(
-                  zones[index].state,
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            var widget;
+            if (index == 0) {
+              widget = Container(
+                padding: EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 16.0),
+                height: 10.0,
+                child: Text(
+                  "Select Location"
                 ),
-                title: Text(
-                  zones[index].location,
-                  style: TextStyle(color: Colors.white),
+              );
+            } else {
+              Zone zone = zones[index-1];
+              widget = Container(
+                child: ListTile(
+                  onTap: (){
+                    changeZone(zones[index]);
+                  },
+                  subtitle: Text(
+                    zone.state,
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                  title: Text(
+                    zone.location,
+                    style: TextStyle(color: Colors.white, fontSize: 20.0),
+                  ),
                 ),
-              ),
-            );
+              );
+            }
+
+            return widget;
           },
         );
       });
