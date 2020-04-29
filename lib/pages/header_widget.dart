@@ -54,7 +54,7 @@ class HeaderWidget extends StatelessWidget {
                     ],
                   ),
                   onPressed: () {
-                    _settingModalBottomSheet(context, data, changeZone);
+                    selectLocationBottomSheet(context, data, changeZone);
                   },
                 ),
                 SizedBox(height: 16.0),
@@ -103,7 +103,9 @@ class HeaderWidget extends StatelessWidget {
                   iconSize: 24.0,
                   icon: SvgPicture.asset("assets/menu.svg"),
                   tooltip: 'Open Settings',
-                  onPressed: () {},
+                  onPressed: () {
+                    settingBottomSheet(context);
+                  },
                 ),
                 SvgPicture.asset(
                   "assets/pray_icons/subuh.svg",
@@ -127,7 +129,8 @@ class HeaderWidget extends StatelessWidget {
   }
 }
 
-void _settingModalBottomSheet(context, data, changeZone) {
+void selectLocationBottomSheet(context, data, changeZone)
+{
   List zones = data["zones"];
   showModalBottomSheet(
       context: context,
@@ -139,11 +142,9 @@ void _settingModalBottomSheet(context, data, changeZone) {
             var widget;
             if (index == 0) {
               widget = Container(
-                padding: EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 16.0),
-                height: 10.0,
-                child: Text(
-                  "Select Location"
-                ),
+                child: ListTile(
+                    title: Text("Select location")
+                )
               );
             } else {
               Zone zone = zones[index-1];
@@ -168,4 +169,40 @@ void _settingModalBottomSheet(context, data, changeZone) {
           },
         );
       });
+}
+
+void settingBottomSheet(context)
+{
+  showModalBottomSheet(
+      
+      context: context,
+      backgroundColor: Colors.black,
+      builder: (BuildContext bc) {
+        return Column(
+          children: <Widget>[
+            ListTile(
+              title: Text("Menu",
+              style: TextStyle(color: Colors.white, fontSize: 16.0),),
+            ),
+            createSettingListTile("Settings", "assets/setting.svg")
+          ],
+        );
+      });
+}
+
+ListTile createSettingListTile(String text, String asset){
+  return ListTile(
+    onTap: (){},
+    leading: ConstrainedBox(
+      constraints: BoxConstraints(
+        maxWidth: 40,
+        maxHeight: 28,
+      ),
+//            child: Image.asset('assets/pray_icons/${prayKey.toLowerCase()}.svg', fit: BoxFit.cover),
+      child: SvgPicture.asset(asset,
+          fit: BoxFit.cover),
+    ),
+    title: Text(text,
+        style: TextStyle(color: Colors.white, fontSize: 20.0)),
+  );
 }
