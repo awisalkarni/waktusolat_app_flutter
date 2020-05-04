@@ -137,7 +137,7 @@ void selectLocationBottomSheet(context, data, changeZone)
       backgroundColor: Colors.black,
       builder: (BuildContext bc) {
         return ListView.builder(
-          itemCount: zones.length,
+          itemCount: zones.length+1,
           itemBuilder: (context, index) {
             var widget;
             if (index == 0) {
@@ -151,7 +151,7 @@ void selectLocationBottomSheet(context, data, changeZone)
               widget = Container(
                 child: ListTile(
                   onTap: (){
-                    changeZone(zones[index]);
+                    changeZone(zone);
                   },
                   subtitle: Text(
                     zone.state,

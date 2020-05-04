@@ -8,7 +8,7 @@ import 'package:waktusolatapp/model/pray_time.dart';
 import 'package:waktusolatapp/pages/pray_time_tile.dart';
 import 'package:waktusolatapp/pages/header_widget.dart';
 import 'package:waktusolatapp/model/zone.dart';
-
+import 'package:wakelock/wakelock.dart';
 
 
 class Home extends StatefulWidget {
@@ -17,8 +17,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
-
 
   Map data = {};
   PrayTime prayTime;
@@ -33,6 +31,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    Wakelock.enable();
   }
   
 

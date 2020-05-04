@@ -17,6 +17,52 @@ class _LoadingState extends State<Loading> {
 
   FlutterLocalNotificationsPlugin notifications = FlutterLocalNotificationsPlugin();
 
+  void setupWorldTime() async {
+    //try local first
+    final prefs = await SharedPreferences.getInstance();
+    // read
+    final zoneCodePrefs = prefs.getString('zone_code') ?? null;
+
+    final String zoneCode = (zoneCodePrefs != null) ? zoneCodePrefs : "wly01";
+
+    print('prefs: $zoneCodePrefs, zoneCode: $zoneCode');
+
+    var now = new DateTime.now();
+    final String month = now.month.toString();
+    final String year = now.year.toString();
+
+    WaktuSolat instance  = WaktuSolat(zoneCode: zoneCode, month: month, year: year);
+    await instance.getPrayTimes();
+
+    //download for next month
+    DateTime nextMonth = Jiffy().add(months: 1);
+    WaktuSolat(zoneCode: zoneCode, month: nextMonth.month.toString(), year: nextMonth.year.toString());
+
+    //remove last month
+    DateTime lastMonth = Jiffy().subtract(months: 1);
+    String lastMonthKey = '${zoneCode}_${lastMonth.month.toString()}_${lastMonth.year.toString()}';
+    prefs.remove(lastMonthKey);
+
+    Zones zones  = Zones();
+    await zones.getZones();
+
+    List zoneList = zones.zones;
+    List prayTimes = instance.prayTimes;
+    PrayTime prayTime = prayTimes[now.day - 1];
+
+    scheduleLocalNotification(prayTimes, instance.zone);
+
+    Navigator.pushReplacementNamed(context, '/home', arguments: {
+      'zone': instance.zone,
+      'month': instance.month,
+      'year': instance.year,
+      'origin': instance.origin,
+      'prayTime': prayTime,
+      'zones': zoneList
+    });
+  }
+
+
   void initLocalPushNotification() async
   {
 // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
@@ -38,8 +84,6 @@ class _LoadingState extends State<Loading> {
     await notifications.cancelAll();
     var pendingNotificationRequests = await notifications.pendingNotificationRequests();
 
-    print('pending notifications ${pendingNotificationRequests.length}');
-
     //request permission iOS
     var result = await notifications
         .resolvePlatformSpecificImplementation<
@@ -50,7 +94,6 @@ class _LoadingState extends State<Loading> {
       sound: true,
     );
 
-    print('notification request result iOS: $result');
 
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'waktusolatapp', 'prayer_time_notication', 'Prayer time notification',
@@ -80,7 +123,6 @@ class _LoadingState extends State<Loading> {
           var prayTimeSchedule = DateTime.fromMillisecondsSinceEpoch(prayListMap.values.elementAt(i) * 1000);
 
           String prayTimeTitle = prayListMap.keys.elementAt(i);
-          print('schedule $prayTimeTitle - $prayTimeSchedule');
 
           await notifications.schedule(
               prayListMap.values.elementAt(i),
@@ -94,27 +136,9 @@ class _LoadingState extends State<Loading> {
     }
 
     pendingNotificationRequests = await notifications.pendingNotificationRequests();
-    print('pending notifications ${pendingNotificationRequests.length}');
+
 
   }
-
-  void scheduleTest() async {
-    var scheduledNotificationDateTime = DateTime.now().add(Duration(seconds: 5));
-    print('schedule: $scheduledNotificationDateTime');
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails('your other channel id',
-        'your other channel name', 'your other channel description');
-    var iOSPlatformChannelSpecifics =
-    IOSNotificationDetails();
-    NotificationDetails platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await notifications.schedule(
-        0,
-        'scheduled title',
-        'scheduled body',
-        scheduledNotificationDateTime,
-        platformChannelSpecifics);
-  }
-
 
   Future onDidReceiveLocalNotification(int id, String title, String body, String payload) {
   }
@@ -127,48 +151,7 @@ class _LoadingState extends State<Loading> {
 
   }
 
-  void setupWorldTime() async {
-    //try local first
-    final prefs = await SharedPreferences.getInstance();
-    // read
-    final zoneCodePrefs = prefs.getString('zone_code') ?? null;
 
-    final String zoneCode = (zoneCodePrefs != null) ? zoneCodePrefs : "wly01";
-
-    var now = new DateTime.now();
-    final String month = now.month.toString();
-    final String year = now.year.toString();
-
-    WaktuSolat instance  = WaktuSolat(zoneCode: zoneCode, month: month, year: year);
-    await instance.getPrayTimes();
-    
-    //download for next month
-    DateTime nextMonth = Jiffy().add(months: 1);
-    WaktuSolat(zoneCode: zoneCode, month: nextMonth.month.toString(), year: nextMonth.year.toString());
-
-    //remove last month
-    DateTime lastMonth = Jiffy().subtract(months: 1);
-    String lastMonthKey = '${zoneCode}_${lastMonth.month.toString()}_${lastMonth.year.toString()}';
-    prefs.remove(lastMonthKey);
-
-    Zones zones  = Zones();
-    await zones.getZones();
-
-    List zoneList = zones.zones;
-    List prayTimes = instance.prayTimes;
-    PrayTime prayTime = prayTimes[now.day - 1];
-
-    scheduleLocalNotification(prayTimes, instance.zone);
-
-    Navigator.pushReplacementNamed(context, '/home', arguments: {
-      'zone': instance.zone,
-      'month': instance.month,
-      'year': instance.year,
-      'origin': instance.origin,
-      'prayTime': prayTime,
-      'zones': zoneList
-    });
-  }
 
   @override
   void initState() {

@@ -29,6 +29,7 @@ dependencies:
   flutter_phoenix: ^0.1.0
   flutter_launcher_icons: ^0.7.5
   flutter_local_notifications: ^1.4.2
+  wakelock: ^0.1.4+1
 
 flutter_icons:
   android: "launcher_icon"
