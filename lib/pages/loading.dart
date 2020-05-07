@@ -66,7 +66,7 @@ class _LoadingState extends State<Loading> {
   void initLocalPushNotification() async
   {
 // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
-    var initializationSettingsAndroid = AndroidInitializationSettings('launcher_icon');
+    var initializationSettingsAndroid = AndroidInitializationSettings('ic_launcher');
     var initializationSettingsIOS = IOSInitializationSettings(
       requestSoundPermission: false,
       requestBadgePermission: false,

@@ -143,7 +143,7 @@ void selectLocationBottomSheet(context, data, changeZone)
             if (index == 0) {
               widget = Container(
                 child: ListTile(
-                    title: Text("Select location")
+                    title: Text("Select location", style: TextStyle(color: Colors.white, fontSize: 16.0))
                 )
               );
             } else {
