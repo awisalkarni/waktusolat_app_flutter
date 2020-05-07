@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:waktusolatapp/model/zone.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
+
 
 class HeaderWidget extends StatelessWidget {
   const HeaderWidget({
@@ -165,7 +167,19 @@ void selectLocationBottomSheet(context, data, changeZone)
               );
             }
 
-            return widget;
+            final scrollDirection = Axis.vertical;
+            AutoScrollController controller = AutoScrollController(
+                viewportBoundaryGetter: () => Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
+                axis: scrollDirection
+            );
+            controller.scrollToIndex(index);
+
+            return AutoScrollTag(
+                key: ValueKey(index),
+                controller: controller,
+                index: index,
+                child: widget
+            );
           },
         );
       });
